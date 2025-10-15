@@ -1,0 +1,45 @@
+{
+  "name": "workshop-fullstack",
+  "version": "1.0.0",
+  "description": "Modern Full-Stack Development Workshop with .NET 9+ and Angular 20+",
+  "private": true,
+  "workspaces": [
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:client\"",
+    "dev:api": "cd api && dotnet run --project src/Workshop.Api",
+    "dev:client": "cd client && npm start",
+    "build": "npm run build:api && npm run build:client",
+    "build:api": "cd api && dotnet build",
+    "build:client": "cd client && npm run build",
+    "test": "npm run test:api && npm run test:client",
+    "test:api": "cd api && dotnet test",
+    "test:client": "cd client && npm test",
+    "clean": "npm run clean:api && npm run clean:client",
+    "clean:api": "cd api && dotnet clean",
+    "clean:client": "cd client && rm -rf node_modules && rm -rf dist",
+    "start": "npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/workshop-fullstack.git"
+  },
+  "keywords": [
+    "workshop",
+    "dotnet",
+    "angular",
+    "fullstack",
+    "poc",
+    "modern-development"
+  ],
+  "author": "Workshop Instructor",
+  "license": "MIT"
+}

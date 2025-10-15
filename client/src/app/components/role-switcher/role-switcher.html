@@ -1,0 +1,35 @@
+<div class="flex items-center gap-4">
+  <!-- User Info -->
+  <div class="flex items-center gap-3 px-4 py-2 bg-[#eaeaea] rounded-lg">
+    <div class="w-8 h-8 bg-[#7dd13d] rounded-full flex items-center justify-center">
+      <svg class="w-5 h-5 text-[#ffffff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+      </svg>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-sm font-semibold text-[#121212]">{{ authService.username() }}</span>
+      <span class="text-xs text-[#606a7a]">{{ authService.role() }}</span>
+    </div>
+  </div>
+
+  <!-- Role Toggle Button -->
+  <button
+    (click)="toggleRole()"
+    class="px-4 py-2 border-2 border-[#7dd13d] text-[#7dd13d] rounded-lg hover:bg-[#7dd13d] hover:text-[#ffffff] transition-colors font-medium"
+    title="Switch role"
+  >
+    @if (authService.role() === Roles.Employee) {
+      Switch to Admin
+    } @else {
+      Switch to Employee
+    }
+  </button>
+
+  <!-- Logout Button -->
+  <button
+    (click)="logout()"
+    class="px-4 py-2 bg-[#606a7a] text-[#ffffff] rounded-lg hover:bg-[#322d31] transition-colors font-medium"
+  >
+    Logout
+  </button>
+</div>

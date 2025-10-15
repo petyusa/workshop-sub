@@ -1,0 +1,47 @@
+<div class="min-h-screen bg-[#eaeaea]">
+  <div class="container mx-auto px-6 py-8 max-w-4xl">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="w-20 h-20 bg-[#7dd13d] rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-12 h-12 text-[#ffffff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+      </div>
+      <h1 class="text-4xl font-bold text-[#121212] mb-2">sonrisa</h1>
+      <p class="text-lg text-[#606a7a]">Booking Management System</p>
+    </div>
+
+    <!-- Location Selector -->
+    <div class="mb-8">
+      <app-location-selector></app-location-selector>
+    </div>
+
+    <!-- Dashboard Content -->
+    @if (locationService.hasSelectedLocation()) {
+      <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-6 shadow-sm">
+        <h2 class="text-2xl font-bold text-[#121212] mb-4">Dashboard</h2>
+        <div class="space-y-4">
+          <div class="p-4 bg-[#e4f9d2] border border-[#7dd13d] rounded-lg">
+            <p class="text-[#3f7c2e] font-semibold">✓ Location Selected</p>
+            <p class="text-sm text-[#606a7a] mt-1">
+              You are now working at: <span class="font-bold text-[#121212]">{{ locationService.selectedLocation()?.name }}</span>
+            </p>
+          </div>
+          <div class="text-center py-8 text-[#606a7a]">
+            <p>Booking management features will appear here</p>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-8 text-center">
+        <div class="w-16 h-16 bg-[#eaeaea] rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-[#606a7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-[#121212] mb-2">Select a Location to Continue</h3>
+        <p class="text-[#606a7a]">Please choose your working location from the dropdown above to access the dashboard</p>
+      </div>
+    }
+  </div>
+</div>

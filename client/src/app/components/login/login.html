@@ -1,0 +1,87 @@
+<div class="min-h-screen bg-[#eaeaea] flex items-center justify-center px-6">
+  <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-2xl p-8 w-full max-w-md shadow-lg">
+    <!-- Logo/Branding -->
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 bg-[#7dd13d] rounded-xl flex items-center justify-center mx-auto mb-4">
+        <svg class="w-10 h-10 text-[#ffffff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+        </svg>
+      </div>
+      <h1 class="text-4xl font-bold text-[#121212] mb-2">sonrisa</h1>
+      <p class="text-[#606a7a]">Booking Management System</p>
+    </div>
+
+    <!-- Login Form -->
+    <form (ngSubmit)="onLogin()" class="space-y-6">
+      <!-- Username Input -->
+      <div>
+        <label for="username" class="block text-sm font-semibold text-[#121212] mb-2">
+          Username
+        </label>
+        <input
+          type="text"
+          id="username"
+          [value]="username()"
+          (input)="username.set($any($event.target).value)"
+          placeholder="Enter your username"
+          required
+          class="w-full px-4 py-3 border border-[#d3d3d3] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7dd13d] focus:border-transparent text-[#121212]"
+        />
+      </div>
+
+      <!-- Role Selection -->
+      <div>
+        <label class="block text-sm font-semibold text-[#121212] mb-3">
+          Select Role
+        </label>
+        <div class="grid grid-cols-2 gap-4">
+          @for (role of roles; track role.value) {
+            <label
+              class="relative flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all"
+              [class.border-[#7dd13d]]="selectedRole() === role.value"
+              [class.bg-[#e4f9d2]]="selectedRole() === role.value"
+              [class.border-[#d3d3d3]]="selectedRole() !== role.value"
+              [class.bg-[#ffffff]]="selectedRole() !== role.value"
+            >
+              <input
+                type="radio"
+                name="role"
+                [value]="role.value"
+                [checked]="selectedRole() === role.value"
+                (change)="selectedRole.set(role.value)"
+                class="sr-only"
+              />
+              <span
+                class="font-semibold"
+                [class.text-[#3f7c2e]]="selectedRole() === role.value"
+                [class.text-[#606a7a]]="selectedRole() !== role.value"
+              >
+                {{ role.label }}
+              </span>
+              @if (selectedRole() === role.value) {
+                <svg class="w-5 h-5 text-[#7dd13d] absolute top-2 right-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+              }
+            </label>
+          }
+        </div>
+      </div>
+
+      <!-- Login Button -->
+      <button
+        type="submit"
+        class="w-full py-3 px-4 bg-[#7dd13d] text-[#ffffff] font-semibold rounded-lg hover:bg-[#3f7c2e] transition-colors duration-300 shadow-md hover:shadow-lg"
+      >
+        Sign In
+      </button>
+    </form>
+
+    <!-- Info -->
+    <div class="mt-6 text-center">
+      <p class="text-sm text-[#606a7a]">
+        This is a POC environment - no password required
+      </p>
+    </div>
+  </div>
+</div>
