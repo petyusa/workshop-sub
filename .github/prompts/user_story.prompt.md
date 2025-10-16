@@ -110,3 +110,18 @@ Acceptance Criteria:
 Remember: A good user story describes the **what** and **why**, never the **how**.
 
 Here are the high level requirements:
+As a sonrisa employee
+I want to view a list of available reservable objects (desks, parking spaces, etc.)
+So that I can see what resources are available for booking
+
+Acceptance Criteria
+
+User can see a list of all reservable objects
+
+Each object shows its type (desk, parking space, etc.)
+
+Each object shows its current availability status
+
+List is easy to scan and understand
+Notes
+This is the foundation for the reservation system. Keep the UI simple and functional for POC.

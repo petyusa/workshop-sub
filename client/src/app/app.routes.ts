@@ -14,6 +14,10 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () => import('./components/home/home').then(m => m.HomeComponent)
+      },
+      {
+        path: 'reservable-objects',
+        loadComponent: () => import('./components/reservable-objects/reservable-objects').then(m => m.ReservableObjectsComponent)
       }
     ]
   },

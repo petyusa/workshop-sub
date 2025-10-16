@@ -76,4 +76,7 @@ app.MapGet("/api/auth/me", (HttpContext context) =>
 // Map location endpoints
 app.MapLocationEndpoints();
 
+// Map reservable object endpoints
+app.MapReservableObjectEndpoints();
+
 app.Run();
