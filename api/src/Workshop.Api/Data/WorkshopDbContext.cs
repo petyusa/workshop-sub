@@ -12,6 +12,7 @@ public class WorkshopDbContext : DbContext
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<ReservableObject> ReservableObjects => Set<ReservableObject>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
+    public DbSet<OpeningHours> OpeningHours => Set<OpeningHours>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,6 +65,20 @@ public class WorkshopDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.LocationId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(e => e.OpeningHours)
+                .WithOne(oh => oh.ReservableObject)
+                .HasForeignKey(oh => oh.ReservableObjectId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Configure OpeningHours entity
+        modelBuilder.Entity<OpeningHours>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.DayOfWeek).IsRequired();
+            entity.Property(e => e.OpenTime).IsRequired();
+            entity.Property(e => e.CloseTime).IsRequired();
         });
 
         // Configure Reservation entity
@@ -116,5 +131,28 @@ public class WorkshopDbContext : DbContext
             new ReservableObject { Id = 20, Name = "Meeting Room Alpha", Type = "MeetingRoom", LocationId = 3, IsActive = true, Description = "8-person capacity, video conferencing" },
             new ReservableObject { Id = 21, Name = "Meeting Room Beta", Type = "MeetingRoom", LocationId = 3, IsActive = true, Description = "4-person capacity, whiteboard" }
         );
+
+        // Seed opening hours for Meeting Rooms (Monday-Friday, 8 AM - 6 PM)
+        var meetingRoomHours = new List<OpeningHours>();
+        var meetingRoomIds = new[] { 20, 21 };
+        var workDays = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+        
+        int openingHoursId = 1;
+        foreach (var roomId in meetingRoomIds)
+        {
+            foreach (var day in workDays)
+            {
+                meetingRoomHours.Add(new OpeningHours
+                {
+                    Id = openingHoursId++,
+                    ReservableObjectId = roomId,
+                    DayOfWeek = day,
+                    OpenTime = new TimeSpan(8, 0, 0),  // 8:00 AM
+                    CloseTime = new TimeSpan(18, 0, 0) // 6:00 PM
+                });
+            }
+        }
+
+        modelBuilder.Entity<OpeningHours>().HasData(meetingRoomHours);
     }
 }

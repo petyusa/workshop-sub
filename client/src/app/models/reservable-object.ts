@@ -13,6 +13,13 @@ export interface ReservableObjectDetail {
   locationName: string;
   isActive: boolean;
   description?: string;
+  openingHours?: OpeningHours[];
+}
+
+export interface OpeningHours {
+  dayOfWeek: number; // 0 = Sunday, 1 = Monday, etc.
+  openTime: string;  // Format: "HH:mm"
+  closeTime: string; // Format: "HH:mm"
 }
 
 export const ReservableObjectTypes = {

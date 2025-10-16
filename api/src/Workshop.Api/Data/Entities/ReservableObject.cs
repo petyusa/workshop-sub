@@ -11,4 +11,5 @@ public class ReservableObject
 
     // Navigation properties
     public Location Location { get; set; } = null!;
+    public ICollection<OpeningHours> OpeningHours { get; set; } = new List<OpeningHours>();
 }

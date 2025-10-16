@@ -30,13 +30,51 @@ public static class ReservationEndpoints
                 return Results.BadRequest("Cannot create reservation in the past");
             }
 
-            // Check if object exists
-            var objectExists = await db.ReservableObjects
-                .AnyAsync(o => o.Id == request.ReservableObjectId && o.IsActive);
+            // Check if object exists and load opening hours
+            var reservableObject = await db.ReservableObjects
+                .Include(o => o.OpeningHours)
+                .FirstOrDefaultAsync(o => o.Id == request.ReservableObjectId && o.IsActive);
 
-            if (!objectExists)
+            if (reservableObject == null)
             {
                 return Results.NotFound("Reservable object not found or inactive");
+            }
+
+            // Validate against opening hours if they exist
+            if (reservableObject.OpeningHours.Any())
+            {
+                var startDate = request.StartDateTime.Date;
+                var endDate = request.EndDateTime.Date;
+                var currentDate = startDate;
+
+                while (currentDate <= endDate)
+                {
+                    var dayOfWeek = currentDate.DayOfWeek;
+                    var openingHoursForDay = reservableObject.OpeningHours
+                        .Where(oh => oh.DayOfWeek == dayOfWeek)
+                        .ToList();
+
+                    if (!openingHoursForDay.Any())
+                    {
+                        return Results.BadRequest($"Object is not available on {dayOfWeek}s");
+                    }
+
+                    // Check if the reservation times fall within opening hours
+                    var startTime = currentDate == startDate ? request.StartDateTime.TimeOfDay : TimeSpan.Zero;
+                    var endTime = currentDate == endDate ? request.EndDateTime.TimeOfDay : new TimeSpan(23, 59, 59);
+
+                    var isWithinHours = openingHoursForDay.Any(oh => 
+                        startTime >= oh.OpenTime && endTime <= oh.CloseTime);
+
+                    if (!isWithinHours)
+                    {
+                        var hours = openingHoursForDay.First();
+                        return Results.BadRequest(
+                            $"Reservation time must be within opening hours ({hours.OpenTime:hh\\:mm} - {hours.CloseTime:hh\\:mm}) on {dayOfWeek}s");
+                    }
+
+                    currentDate = currentDate.AddDays(1);
+                }
             }
 
             var reservation = new Reservation
