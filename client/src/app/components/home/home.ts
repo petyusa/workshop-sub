@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { LocationSelectorComponent } from '../location-selector/location-selector';
 import { LocationService } from '../../services/location.service';
 
@@ -7,7 +8,7 @@ import { LocationService } from '../../services/location.service';
   templateUrl: './home.html',
   styleUrls: ['./home.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [LocationSelectorComponent],
+  imports: [LocationSelectorComponent, RouterLink],
 })
 export class HomeComponent {
   protected readonly locationService = inject(LocationService);

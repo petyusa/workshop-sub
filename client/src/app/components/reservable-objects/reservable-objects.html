@@ -1,0 +1,116 @@
+<div class="min-h-screen bg-[#eaeaea]">
+  <div class="container mx-auto px-6 py-8 max-w-7xl">
+    <!-- Header -->
+    <div class="mb-8">
+      <button 
+        (click)="goBack()"
+        class="mb-4 flex items-center gap-2 text-[#606a7a] hover:text-[#121212] transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        <span>Back to Dashboard</span>
+      </button>
+
+      <div class="flex items-center gap-4 mb-2">
+        <div class="w-12 h-12 bg-[#7dd13d] rounded-lg flex items-center justify-center">
+          <svg class="w-7 h-7 text-[#ffffff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold text-[#121212]">Available Resources</h1>
+          @if (locationService.selectedLocation(); as location) {
+            <p class="text-[#606a7a]">at {{ location.name }}</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="mb-6 bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-4">
+      <div class="flex flex-wrap gap-3">
+        @for (typeOption of objectTypes; track typeOption.value) {
+          <button
+            (click)="filterByType(typeOption.value)"
+            [class]="selectedType() === typeOption.value 
+              ? 'px-4 py-2 rounded-lg font-medium transition-colors bg-[#7dd13d] text-[#ffffff] border-2 border-[#7dd13d]'
+              : 'px-4 py-2 rounded-lg font-medium transition-colors bg-[#ffffff] text-[#606a7a] border-2 border-[#d3d3d3] hover:border-[#7dd13d]'">
+            {{ typeOption.label }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (objectService.isLoading()) {
+      <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-12 text-center">
+        <div class="inline-block w-12 h-12 border-4 border-[#d3d3d3] border-t-[#7dd13d] rounded-full animate-spin"></div>
+        <p class="mt-4 text-[#606a7a]">Loading resources...</p>
+      </div>
+    } @else if (objectService.objects().length === 0) {
+      <!-- Empty State -->
+      <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-12 text-center">
+        <div class="w-16 h-16 bg-[#eaeaea] rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-[#606a7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-[#121212] mb-2">No Resources Found</h3>
+        <p class="text-[#606a7a]">
+          @if (selectedType()) {
+            No {{ selectedType() === 'Desk' ? 'desks' : selectedType() === 'ParkingSpace' ? 'parking spaces' : 'meeting rooms' }} available at this location.
+          } @else {
+            No resources available at this location.
+          }
+        </p>
+      </div>
+    } @else {
+      <!-- Objects Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (object of objectService.objects(); track object.id) {
+          <div 
+            [class]="object.isAvailable 
+              ? 'bg-[#ffffff] border-2 border-[#7dd13d] rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow'
+              : 'bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-5 shadow-sm opacity-75'">
+            
+            <!-- Object Name -->
+            <h3 class="text-lg font-bold text-[#121212] mb-2">{{ object.name }}</h3>
+            
+            <!-- Type Badge -->
+            <div class="flex items-center gap-2 mb-3">
+              <span [class]="'px-3 py-1 rounded-full text-xs font-semibold border ' + getTypeBadgeClass(object.type)">
+                {{ getTypeLabel(object.type) }}
+              </span>
+            </div>
+            
+            <!-- Location -->
+            <div class="flex items-center gap-2 mb-3 text-sm text-[#606a7a]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              <span>{{ object.locationName }}</span>
+            </div>
+            
+            <!-- Availability Badge -->
+            @if (object.isAvailable) {
+              <div class="flex items-center gap-2 px-3 py-2 bg-[#e4f9d2] border border-[#7dd13d] rounded-lg">
+                <svg class="w-5 h-5 text-[#3f7c2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="text-sm font-semibold text-[#3f7c2e]">Available</span>
+              </div>
+            } @else {
+              <div class="flex items-center gap-2 px-3 py-2 bg-[#eaeaea] border border-[#d3d3d3] rounded-lg">
+                <svg class="w-5 h-5 text-[#606a7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                </svg>
+                <span class="text-sm font-semibold text-[#606a7a]">Unavailable</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
