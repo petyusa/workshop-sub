@@ -1,0 +1,168 @@
+<div class="min-h-screen bg-[#eaeaea]">
+  <div class="container mx-auto px-6 py-8 max-w-7xl">
+    <!-- Header -->
+    <div class="mb-8">
+      <button 
+        (click)="goBack()"
+        class="mb-4 flex items-center gap-2 text-[#606a7a] hover:text-[#121212] transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        <span>Back to Dashboard</span>
+      </button>
+
+      <div class="flex items-center gap-4 mb-2">
+        <div class="w-12 h-12 bg-[#7dd13d] rounded-lg flex items-center justify-center">
+          <svg class="w-7 h-7 text-[#ffffff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold text-[#121212]">Floor Plan View</h1>
+          @if (locationService.selectedLocation(); as location) {
+            <p class="text-[#606a7a]">{{ location.name }}</p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (floorPlanService.isLoading()) {
+      <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-12 text-center">
+        <div class="inline-block w-12 h-12 border-4 border-[#d3d3d3] border-t-[#7dd13d] rounded-full animate-spin"></div>
+        <p class="mt-4 text-[#606a7a]">Loading floor plan...</p>
+      </div>
+    } @else if (!floorPlanService.floorPlan()) {
+      <!-- Empty State -->
+      <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-12 text-center">
+        <div class="w-16 h-16 bg-[#eaeaea] rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-[#606a7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-[#121212] mb-2">No Floor Plan Available</h3>
+        <p class="text-[#606a7a]">Please select a location to view the floor plan.</p>
+      </div>
+    } @else {
+      <div class="flex flex-col lg:flex-row gap-6">
+        <!-- Floor Plan Grid -->
+        <div class="flex-1">
+          <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-6">
+            <div 
+              class="floor-plan-grid"
+              [style.--grid-cols]="floorPlanService.floorPlan()!.width"
+              [style.--grid-rows]="floorPlanService.floorPlan()!.height">
+              
+              @for (obj of floorPlanService.floorPlan()!.objects; track obj.id) {
+                <div 
+                  class="floor-plan-object"
+                  [class]="getObjectClass(obj)"
+                  [style.--col-start]="obj.positionX"
+                  [style.--row-start]="obj.positionY"
+                  (click)="onObjectClick(obj)"
+                  [title]="obj.name + ' - ' + getTypeName(obj.type)">
+                  
+                  <!-- Type Icon -->
+                  <div class="text-2xl mb-1">{{ getTypeIcon(obj.type) }}</div>
+                  
+                  <!-- Object Name -->
+                  <div class="text-xs font-bold text-[#121212] truncate">{{ obj.name }}</div>
+                  
+                  <!-- Status Badge -->
+                  @if (obj.isAvailable) {
+                    <div class="mt-1 px-2 py-0.5 bg-[#7dd13d] text-[#ffffff] text-xs rounded-full inline-block">
+                      Available
+                    </div>
+                  } @else if (obj.currentReservationUser) {
+                    <div class="mt-1 px-2 py-0.5 bg-[#606a7a] text-[#ffffff] text-xs rounded-full inline-block">
+                      Reserved
+                    </div>
+                  } @else {
+                    <div class="mt-1 px-2 py-0.5 bg-[#d3d3d3] text-[#606a7a] text-xs rounded-full inline-block">
+                      Inactive
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="lg:w-64">
+          <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-6 sticky top-4">
+            <h3 class="text-lg font-bold text-[#121212] mb-4">Legend</h3>
+            
+            <!-- Status Legend -->
+            <div class="space-y-3 mb-6">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 border-2 border-[#7dd13d] bg-[#e4f9d2] rounded"></div>
+                <div>
+                  <p class="text-sm font-semibold text-[#121212]">Available</p>
+                  <p class="text-xs text-[#606a7a]">Click to reserve</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 border-2 border-[#d3d3d3] bg-[#eaeaea] rounded"></div>
+                <div>
+                  <p class="text-sm font-semibold text-[#121212]">Reserved</p>
+                  <p class="text-xs text-[#606a7a]">Currently in use</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 border-2 border-[#d3d3d3] bg-[#ffffff] rounded opacity-50"></div>
+                <div>
+                  <p class="text-sm font-semibold text-[#121212]">Inactive</p>
+                  <p class="text-xs text-[#606a7a]">Not available</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Type Legend -->
+            <div class="border-t border-[#d3d3d3] pt-4">
+              <h4 class="text-sm font-bold text-[#121212] mb-3">Resource Types</h4>
+              <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-xl">🪑</span>
+                  <span class="text-sm text-[#606a7a]">Desk</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl">🚗</span>
+                  <span class="text-sm text-[#606a7a]">Parking Space</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xl">🏢</span>
+                  <span class="text-sm text-[#606a7a]">Meeting Room</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Reservation Dialog -->
+  @if (showReservationDialog() && selectedObject()) {
+    <app-reservation-dialog
+      [reservableObject]="selectedObject()!"
+      (reserved)="onReservationComplete()"
+      (cancelled)="onReservationCancelled()"
+    />
+  }
+
+  <!-- Success Toast -->
+  @if (showSuccessToast()) {
+    <div class="fixed top-4 right-4 bg-[#e4f9d2] border-2 border-[#7dd13d] rounded-lg p-4 shadow-lg z-50 flex items-center gap-3 animate-slide-in">
+      <svg class="w-6 h-6 text-[#3f7c2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div>
+        <p class="text-[#3f7c2e] font-bold">Reservation created!</p>
+        <p class="text-[#606a7a] text-sm">Floor plan updated with new reservation.</p>
+      </div>
+    </div>
+  }
+</div>
