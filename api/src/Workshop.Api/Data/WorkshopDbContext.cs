@@ -11,6 +11,7 @@ public class WorkshopDbContext : DbContext
 
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<ReservableObject> ReservableObjects => Set<ReservableObject>();
+    public DbSet<Reservation> Reservations => Set<Reservation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,6 +63,21 @@ public class WorkshopDbContext : DbContext
             entity.HasOne(e => e.Location)
                 .WithMany()
                 .HasForeignKey(e => e.LocationId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Configure Reservation entity
+        modelBuilder.Entity<Reservation>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.UserId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.StartDateTime).IsRequired();
+            entity.Property(e => e.EndDateTime).IsRequired();
+            entity.Property(e => e.CreatedAt).IsRequired();
+            
+            entity.HasOne(e => e.ReservableObject)
+                .WithMany()
+                .HasForeignKey(e => e.ReservableObjectId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 

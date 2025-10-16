@@ -79,4 +79,7 @@ app.MapLocationEndpoints();
 // Map reservable object endpoints
 app.MapReservableObjectEndpoints();
 
+// Map reservation endpoints
+app.MapReservationEndpoints();
+
 app.Run();

@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ReservableObject } from '../models/reservable-object';
+import { ReservableObject, ReservableObjectDetail } from '../models/reservable-object';
 
 @Injectable({
   providedIn: 'root'
@@ -41,9 +41,9 @@ export class ReservableObjectService {
     }
   }
 
-  async getObjectById(id: number): Promise<ReservableObject | null> {
+  async getObjectById(id: number): Promise<ReservableObjectDetail | null> {
     try {
-      const object = await this.http.get<ReservableObject>(`${this.apiUrl}/api/reservable-objects/${id}`).toPromise();
+      const object = await this.http.get<ReservableObjectDetail>(`${this.apiUrl}/api/reservable-objects/${id}`).toPromise();
       return object || null;
     } catch (error) {
       console.error('Failed to load reservable object:', error);
