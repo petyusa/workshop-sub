@@ -18,6 +18,10 @@ export const routes: Routes = [
       {
         path: 'reservable-objects',
         loadComponent: () => import('./components/reservable-objects/reservable-objects').then(m => m.ReservableObjectsComponent)
+      },
+      {
+        path: 'my-reservations',
+        loadComponent: () => import('./components/my-reservations/my-reservations').then(m => m.MyReservationsComponent)
       }
     ]
   },

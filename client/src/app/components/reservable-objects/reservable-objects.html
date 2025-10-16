@@ -94,12 +94,22 @@
             
             <!-- Availability Badge -->
             @if (object.isAvailable) {
-              <div class="flex items-center gap-2 px-3 py-2 bg-[#e4f9d2] border border-[#7dd13d] rounded-lg">
+              <div class="flex items-center gap-2 px-3 py-2 bg-[#e4f9d2] border border-[#7dd13d] rounded-lg mb-3">
                 <svg class="w-5 h-5 text-[#3f7c2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <span class="text-sm font-semibold text-[#3f7c2e]">Available</span>
               </div>
+              
+              <!-- Reserve Button -->
+              <button
+                (click)="openReservationDialog(object.id)"
+                class="w-full px-4 py-2 bg-[#7dd13d] hover:bg-[#3f7c2e] text-[#ffffff] font-medium rounded-lg transition-colors flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span>Reserve</span>
+              </button>
             } @else {
               <div class="flex items-center gap-2 px-3 py-2 bg-[#eaeaea] border border-[#d3d3d3] rounded-lg">
                 <svg class="w-5 h-5 text-[#606a7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,4 +123,26 @@
       </div>
     }
   </div>
+
+  <!-- Reservation Dialog -->
+  @if (showReservationDialog() && selectedObject()) {
+    <app-reservation-dialog
+      [reservableObject]="selectedObject()!"
+      (reserved)="onReservationComplete()"
+      (cancelled)="onReservationCancelled()"
+    />
+  }
+
+  <!-- Success Toast -->
+  @if (showSuccessToast()) {
+    <div class="fixed top-4 right-4 bg-[#e4f9d2] border-2 border-[#7dd13d] rounded-lg p-4 shadow-lg z-50 flex items-center gap-3 animate-slide-in">
+      <svg class="w-6 h-6 text-[#3f7c2e]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <div>
+        <p class="text-[#3f7c2e] font-bold">Reservation created!</p>
+        <p class="text-[#606a7a] text-sm">Your resource has been reserved successfully.</p>
+      </div>
+    </div>
+  }
 </div>

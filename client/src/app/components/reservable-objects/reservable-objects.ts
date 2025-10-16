@@ -2,18 +2,24 @@ import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@ang
 import { Router } from '@angular/router';
 import { ReservableObjectService } from '../../services/reservable-object.service';
 import { LocationService } from '../../services/location.service';
-import { ReservableObjectTypes } from '../../models/reservable-object';
+import { ReservableObjectTypes, ReservableObjectDetail } from '../../models/reservable-object';
+import { ReservationDialogComponent } from '../reservation-dialog/reservation-dialog';
 
 @Component({
   selector: 'app-reservable-objects',
   templateUrl: './reservable-objects.html',
   styleUrls: ['./reservable-objects.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ReservationDialogComponent],
 })
 export class ReservableObjectsComponent {
   protected readonly objectService = inject(ReservableObjectService);
   protected readonly locationService = inject(LocationService);
   private readonly router = inject(Router);
+
+  protected readonly selectedObject = signal<ReservableObjectDetail | null>(null);
+  protected readonly showReservationDialog = signal(false);
+  protected readonly showSuccessToast = signal(false);
 
   protected readonly selectedType = signal<string | null>(null);
   protected readonly objectTypes = [
@@ -73,5 +79,28 @@ export class ReservableObjectsComponent {
 
   goBack(): void {
     this.router.navigate(['/']);
+  }
+
+  async openReservationDialog(objectId: number): Promise<void> {
+    const objectDetail = await this.objectService.getObjectById(objectId);
+    if (objectDetail) {
+      this.selectedObject.set(objectDetail);
+      this.showReservationDialog.set(true);
+    }
+  }
+
+  onReservationComplete(): void {
+    this.showReservationDialog.set(false);
+    this.selectedObject.set(null);
+    this.showSuccessToast.set(true);
+    
+    setTimeout(() => {
+      this.showSuccessToast.set(false);
+    }, 3000);
+  }
+
+  onReservationCancelled(): void {
+    this.showReservationDialog.set(false);
+    this.selectedObject.set(null);
   }
 }
