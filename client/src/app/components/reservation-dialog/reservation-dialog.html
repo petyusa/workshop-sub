@@ -21,6 +21,32 @@
         </p>
       </div>
 
+      <!-- Opening Hours Info -->
+      @if (reservableObject().openingHours && reservableObject().openingHours!.length > 0) {
+        <div class="bg-[#ffffff] border border-[#d3d3d3] rounded-lg p-4">
+          <div class="flex items-center gap-2 mb-3">
+            <svg class="w-5 h-5 text-[#606a7a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <h4 class="font-bold text-[#121212]">Opening Hours</h4>
+          </div>
+          <div class="space-y-2">
+            @for (hours of getGroupedOpeningHours(); track hours.days) {
+              <div class="flex justify-between text-sm">
+                <span class="text-[#606a7a] font-medium">{{ hours.days }}</span>
+                <span class="text-[#121212]">{{ hours.openTime }} - {{ hours.closeTime }}</span>
+              </div>
+            }
+          </div>
+          @if (getClosedDays().length > 0) {
+            <div class="flex justify-between text-sm mt-2 pt-2 border-t border-[#d3d3d3]">
+              <span class="text-[#606a7a] font-medium">{{ getClosedDays() }}</span>
+              <span class="text-red-600">Closed</span>
+            </div>
+          }
+        </div>
+      }
+
       <!-- Start Date/Time -->
       <div>
         <label class="block text-sm font-medium text-[#121212] mb-2">

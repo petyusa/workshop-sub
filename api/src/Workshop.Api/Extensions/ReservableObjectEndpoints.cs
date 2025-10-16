@@ -56,6 +56,7 @@ public static class ReservableObjectEndpoints
         {
             var reservableObject = await db.ReservableObjects
                 .Include(r => r.Location)
+                .Include(r => r.OpeningHours)
                 .Where(r => r.Id == id)
                 .Select(r => new ReservableObjectResponse(
                     r.Id,
@@ -63,7 +64,12 @@ public static class ReservableObjectEndpoints
                     r.Type,
                     r.Location.Name,
                     r.IsActive,
-                    r.Description
+                    r.Description,
+                    r.OpeningHours.Select(oh => new OpeningHoursResponse(
+                        oh.DayOfWeek,
+                        oh.OpenTime.ToString(@"hh\:mm"),
+                        oh.CloseTime.ToString(@"hh\:mm")
+                    )).ToList()
                 ))
                 .FirstOrDefaultAsync();
 

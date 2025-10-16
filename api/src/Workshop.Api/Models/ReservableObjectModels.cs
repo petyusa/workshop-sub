@@ -14,5 +14,12 @@ public record ReservableObjectResponse(
     string Type,
     string LocationName,
     bool IsActive,
-    string? Description
+    string? Description,
+    List<OpeningHoursResponse>? OpeningHours
+);
+
+public record OpeningHoursResponse(
+    DayOfWeek DayOfWeek,
+    string OpenTime,
+    string CloseTime
 );
