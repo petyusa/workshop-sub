@@ -152,3 +152,7 @@ bld/
 # Backup files
 *.bak
 *.backup
+
+# SQLite temp files
+*.db-shm
+*.db-wal
